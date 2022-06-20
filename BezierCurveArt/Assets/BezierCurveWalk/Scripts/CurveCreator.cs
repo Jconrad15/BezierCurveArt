@@ -12,9 +12,24 @@ namespace BezierCurveWalk
         private List<GameObject> curveGOs = new List<GameObject>();
 
         private float curveResolution = 0.01f;
-        private float delay = 0.001f;
+
+        private float delay;
+        private float Delay
+        {
+            get => delay;
+            set
+            {
+                delay = value;
+            }
+        }
+
         private readonly float yTranslationChance = 0.2f;
         private bool isLowInk = false;
+
+        private void Start()
+        {
+            Delay = 0.001f;
+        }
 
         public void CreateNewCurves()
         {
@@ -64,20 +79,39 @@ namespace BezierCurveWalk
 
                     t += curveResolution;
 
-                    if (isLowInk == false) 
+
+                    if (isLowInk == false)
                     {
-                        yield return new WaitForSeconds(delay);
+                        // Change return conditions based on build type
+                        // WebGL performs very badly trying to show drawing
+                        // for each line segment
+                        #if UNITY_WEBGL
+                        // Return here some of the time
+                        if (Random.value > 0.7f)
+                        {
+                            yield return new WaitForSeconds(Delay);
+                        }
+                        #else
+                        yield return new WaitForSeconds(Delay);
+                        #endif
                     }
+
                 }
 
                 // Set current pos to end of last curve
                 currentPosition = curve.GetPosition(t);
                 counter += 1;
 
+                #if UNITY_WEBGL
+                // Don't return here
+                yield return new WaitForEndOfFrame();
+                #else
                 if (isLowInk)
                 {
                     yield return new WaitForSeconds(0.1f);
                 }
+                #endif
+
             }
 
         }
@@ -158,7 +192,7 @@ namespace BezierCurveWalk
 
         public void SetDrawSpeed(float value)
         {
-            delay = value;
+            Delay = value;
         }
 
     }
