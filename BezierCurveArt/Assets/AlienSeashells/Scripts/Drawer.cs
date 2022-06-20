@@ -2,62 +2,65 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Drawer : MonoBehaviour
+namespace AlienSeashells
 {
-    [SerializeField]
-    private GameObject dotPrefab;
-
-    private List<GameObject> createdCurves = new List<GameObject>();
-    private readonly float granularity = 0.01f;
-
-    private int seed;
-
-    public void Draw(List<CubicBezierCurve> curves, int seed)
+    public class Drawer : MonoBehaviour
     {
-        this.seed = seed;
+        [SerializeField]
+        private GameObject dotPrefab;
 
-        ClearAll();
+        private List<GameObject> createdCurves = new List<GameObject>();
+        private readonly float granularity = 0.01f;
 
-        for (int i = 0; i < curves.Count; i++)
+        private int seed;
+
+        public void Draw(List<CubicBezierCurve> curves, int seed)
         {
-            DrawCurve(curves[i]);
-        }
-    }
+            this.seed = seed;
 
-    private void DrawCurve(CubicBezierCurve curve)
-    {
-        GameObject curveObject = new GameObject("Curve");
-        curveObject.transform.SetParent(transform);
+            ClearAll();
 
-        float t = 0f;
-
-        while (t <= 1f)
-        {
-            Vector3 position = curve.GetPosition(t);
-
-            CreateSphere(position, curveObject);
-            t += granularity;
+            for (int i = 0; i < curves.Count; i++)
+            {
+                DrawCurve(curves[i]);
+            }
         }
 
-        createdCurves.Add(curveObject);
-    }
-
-    private void CreateSphere(Vector3 position, GameObject parent)
-    {
-        GameObject sphere = Instantiate(dotPrefab, parent.transform);
-        sphere.transform.position = position;
-
-        sphere.GetComponent<MeshRenderer>().material
-            .SetVector("_Seed", new Vector2(seed, -seed));
-    }
-
-    private void ClearAll()
-    {
-        foreach (GameObject curveObject in createdCurves)
+        private void DrawCurve(CubicBezierCurve curve)
         {
-            Destroy(curveObject);
-        }
-        createdCurves.Clear();
-    }
+            GameObject curveObject = new GameObject("Curve");
+            curveObject.transform.SetParent(transform);
 
+            float t = 0f;
+
+            while (t <= 1f)
+            {
+                Vector3 position = curve.GetPosition(t);
+
+                CreateSphere(position, curveObject);
+                t += granularity;
+            }
+
+            createdCurves.Add(curveObject);
+        }
+
+        private void CreateSphere(Vector3 position, GameObject parent)
+        {
+            GameObject sphere = Instantiate(dotPrefab, parent.transform);
+            sphere.transform.position = position;
+
+            sphere.GetComponent<MeshRenderer>().material
+                .SetVector("_Seed", new Vector2(seed, -seed));
+        }
+
+        private void ClearAll()
+        {
+            foreach (GameObject curveObject in createdCurves)
+            {
+                Destroy(curveObject);
+            }
+            createdCurves.Clear();
+        }
+
+    }
 }

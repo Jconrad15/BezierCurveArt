@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraController : MonoBehaviour
@@ -32,7 +30,11 @@ public class CameraController : MonoBehaviour
 
     private void Zoom(float zoomMovement)
     {
-        radius -= zoomMovement * zoomSpeed * (radius/10) * Time.deltaTime;
+        radius -= zoomMovement *
+            zoomSpeed *
+            (radius / 10) *
+            Time.deltaTime;
+
         UpdatePosition();
     }
 

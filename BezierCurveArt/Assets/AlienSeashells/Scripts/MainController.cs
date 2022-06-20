@@ -2,37 +2,40 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MainController : MonoBehaviour
+namespace AlienSeashells
 {
-    [SerializeField]
-    private Drawer drawer;
-
-    private CurveGenerator curveGenerator;
-
-    private int seed;
-
-    void Start()
+    public class MainController : MonoBehaviour
     {
-        curveGenerator = new CurveGenerator();
-        Generate();
-    }
+        [SerializeField]
+        private Drawer drawer;
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (Input.GetMouseButtonDown(0))
+        private CurveGenerator curveGenerator;
+
+        private int seed;
+
+        void Start()
         {
+            curveGenerator = new CurveGenerator();
             Generate();
         }
-    }
 
-    private void Generate()
-    {
-        seed = Random.Range(-10000, 10000);
+        // Update is called once per frame
+        void Update()
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                Generate();
+            }
+        }
 
-        List<CubicBezierCurve> curves =
-            curveGenerator.GenerateCurves(seed);
+        private void Generate()
+        {
+            seed = Random.Range(-10000, 10000);
 
-        drawer.Draw(curves, seed);
+            List<CubicBezierCurve> curves =
+                curveGenerator.GenerateCurves(seed);
+
+            drawer.Draw(curves, seed);
+        }
     }
 }
