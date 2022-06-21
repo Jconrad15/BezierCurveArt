@@ -41,21 +41,21 @@ namespace BezierCurveWalk
 
         private IEnumerator Create()
         {
-            int curveCount = Random.Range(6, 10);
-            int counter = 0;
+            int curveCount = Random.Range(8, 14);
+            int currentCurveIndex = 0;
 
             Vector3 currentPosition = Vector3.zero;
 
-            while (counter < curveCount)
+            while (currentCurveIndex < curveCount)
             {
                 // Generate curve
                 Vector3[] controlPoints =
-                    GenerateControlPoints(currentPosition);
+                    GenerateControlPoints(currentPosition, currentCurveIndex);
                 CubicBezierCurve curve =
                     new CubicBezierCurve(controlPoints);
 
                 GameObject curveGO =
-                    new GameObject("curve " + counter.ToString());
+                    new GameObject("curve " + currentCurveIndex.ToString());
                 curveGO.transform.SetParent(transform);
                 curveGOs.Add(curveGO);
 
@@ -100,7 +100,7 @@ namespace BezierCurveWalk
 
                 // Set current pos to end of last curve
                 currentPosition = curve.GetPosition(t);
-                counter += 1;
+                currentCurveIndex += 1;
 
                 #if UNITY_WEBGL
                 // Don't return here
@@ -116,15 +116,16 @@ namespace BezierCurveWalk
 
         }
 
-        private Vector3[] GenerateControlPoints(Vector3 startPos)
+        private Vector3[] GenerateControlPoints(
+            Vector3 startPos, int currentCurveIndex)
         {
             Vector3[] controlPoints = new Vector3[4];
 
             Vector3 endPos = DetermineEndPos(startPos);
 
             controlPoints[0] = startPos;
-            controlPoints[1] = MutateVector(startPos);
-            controlPoints[2] = MutateVector(endPos);
+            controlPoints[1] = MutateVector(startPos, currentCurveIndex);
+            controlPoints[2] = MutateVector(endPos, currentCurveIndex);
             controlPoints[3] = endPos;
 
             return controlPoints;
@@ -133,7 +134,7 @@ namespace BezierCurveWalk
         private Vector3 DetermineEndPos(Vector3 startPos)
         {
             Vector3 endPos = startPos;
-            if (Random.value < 0.9f)
+            if (Random.value < 0.95f)
             {
                 // Generally move towards the right
                 endPos.x += Random.Range(0.5f, 1f);
@@ -141,7 +142,7 @@ namespace BezierCurveWalk
             else
             {
                 // Chance to loop backwards
-                endPos.x += Random.Range(-1f, -0.5f);
+                endPos.x += Random.Range(-0.5f, -0.25f);
             }
 
             endPos = TryYTranslation(endPos);
@@ -159,10 +160,14 @@ namespace BezierCurveWalk
             return endPos;
         }
 
-        private Vector3 MutateVector(Vector3 v)
+        private Vector3 MutateVector(
+            Vector3 v, int currentCurveIndex)
         {
-            v.x += Random.Range(-2, 2);
-            v.y += Random.Range(-2, 2);
+            float scale = 1f;
+            if (currentCurveIndex >= 5) { scale = 0.5f; }
+
+            v.x += Random.Range(-1.5f, 1f);
+            v.y += Random.Range(-2 * scale, 2 * scale);
             //v.z += Random.Range(-1, 1);
             return v;
         }
