@@ -22,8 +22,19 @@ namespace Flowers
             {
                 GameObject newFlower = Instantiate(largeFlower);
                 newFlower.transform.SetParent(field.transform);
+                // Scale size
                 newFlower.transform.localScale =
                     newFlower.transform.localScale * scale;
+                // Scale lines
+                LineRenderer[] lrs =
+                    newFlower.GetComponentsInChildren<LineRenderer>();
+                foreach (LineRenderer lr in lrs)
+                {
+                    lr.startWidth *= scale;
+                    lr.endWidth *= scale;
+                }
+                
+                // Position
                 Vector3 newPos = new Vector3(
                     Random.Range(-fieldSize, fieldSize),
                     -2 + (amplitude * scale * 2f),

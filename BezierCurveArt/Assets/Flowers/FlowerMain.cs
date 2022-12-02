@@ -21,8 +21,8 @@ namespace Flowers
         private int lineCount = 10;
         private float innerRadius = 0.5f;
         private float stemWobble = 0.5f;
-        private Color color1 = new Color32(115, 111, 78, 255);
-        private Color color2 = new Color32(115, 111, 78, 255);
+        private Color color1 = new Color32(76, 6, 29, 255);
+        private Color color2 = new Color32(209, 122, 34, 255);
         private float randomInfluence = 0;
         private float bezierCurveAugment = 0;
 
