@@ -29,6 +29,8 @@ namespace Flowers
                     -2 + (amplitude * scale * 2f),
                     Random.Range(-fieldSize, fieldSize));
                 newFlower.transform.position = newPos;
+                // Random y rotation
+                newFlower.transform.Rotate(0, Random.Range(0, 360), 0);
             }
 
             Random.state = oldState;

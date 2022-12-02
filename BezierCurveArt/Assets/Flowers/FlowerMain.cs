@@ -21,6 +21,8 @@ namespace Flowers
         int lineCount = 10;
         float innerRadius = 0.5f;
         float stemWobble = 0.5f;
+        Color color1 = new Color32(115, 111, 78, 255);
+        Color color2 = new Color32(115, 111, 78, 255);
 
         // Field Variables
         int flowerCount = 100;
@@ -45,7 +47,7 @@ namespace Flowers
 
             largeFlower = flowerGenerator.CreateFlower(
                 amplitude, seed, resolution, lineCount, innerRadius,
-                stemWobble);
+                stemWobble, color1, color2);
 
             field = flowerField.CreateField(
                 seed, amplitude, largeFlower, flowerCount, fieldSize);
@@ -112,7 +114,17 @@ namespace Flowers
             Create();
         }
 
+        public void Color1Changed(Color color1)
+        {
+            this.color1 = color1;
+            Create();
+        }
 
+        public void Color2Changed(Color color2)
+        {
+            this.color2 = color2;
+            Create();
+        }
 
     }
 }

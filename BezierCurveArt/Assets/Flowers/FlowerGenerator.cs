@@ -14,7 +14,8 @@ namespace Flowers
             int seed,
             int resolution, 
             int lineCount,
-            float innerRadius, float stemWobble)
+            float innerRadius, float stemWobble,
+            Color color1, Color color2)
         {
             Random.State oldState = Random.state;
             Random.InitState(seed);
@@ -58,10 +59,28 @@ namespace Flowers
                 lr.positionCount = positions.Length;
                 lr.SetPositions(positions);
 
+                lr.startColor = color1;
+                lr.endColor = color2;
+
                 // Add lines to flower GO
                 newLine.transform.SetParent(flower.transform);
             }
 
+            // Add stem to flower GO
+            GameObject stemLine = GenerateStem(
+                resolution, innerRadius, stemWobble,
+                height, color1, color2);
+            stemLine.transform.SetParent(flower.transform);
+
+            Random.state = oldState;
+            return flower;
+        }
+
+        private GameObject GenerateStem(
+            int resolution, float innerRadius,
+            float stemWobble, float height,
+            Color color1, Color color2)
+        {
             // Add line to ground for stem
             GameObject stemLine = Instantiate(prefabLine);
             LineRenderer stemLine_lr = stemLine.GetComponent<LineRenderer>();
@@ -91,13 +110,10 @@ namespace Flowers
             stemLine_lr.positionCount = stemPositions.Length;
             stemLine_lr.SetPositions(stemPositions);
 
-            // Add stem to flower GO
-            stemLine.transform.SetParent(flower.transform);
+            stemLine_lr.startColor = color1;
+            stemLine_lr.endColor = color2;
 
-            Random.state = oldState;
-            return flower;
+            return stemLine;
         }
-
-
     }
 }
