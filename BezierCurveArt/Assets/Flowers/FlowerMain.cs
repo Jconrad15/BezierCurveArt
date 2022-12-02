@@ -14,19 +14,21 @@ namespace Flowers
         private GameObject largeFlower;
         private GameObject field;
 
-        int seed = -1;
+        private int seed = -1;
         // Flower Variables
-        float amplitude = 1f;
-        int resolution = 25;
-        int lineCount = 10;
-        float innerRadius = 0.5f;
-        float stemWobble = 0.5f;
-        Color color1 = new Color32(115, 111, 78, 255);
-        Color color2 = new Color32(115, 111, 78, 255);
+        private float amplitude = 1f;
+        private int resolution = 25;
+        private int lineCount = 10;
+        private float innerRadius = 0.5f;
+        private float stemWobble = 0.5f;
+        private Color color1 = new Color32(115, 111, 78, 255);
+        private Color color2 = new Color32(115, 111, 78, 255);
+        private float randomInfluence = 0;
+        private float bezierCurveAugment = 0;
 
         // Field Variables
-        int flowerCount = 100;
-        float fieldSize = 10f;
+        private int flowerCount = 100;
+        private float fieldSize = 10f;
 
         private void Start()
         {
@@ -47,7 +49,8 @@ namespace Flowers
 
             largeFlower = flowerGenerator.CreateFlower(
                 amplitude, seed, resolution, lineCount, innerRadius,
-                stemWobble, color1, color2);
+                stemWobble, color1, color2, randomInfluence,
+                bezierCurveAugment);
 
             field = flowerField.CreateField(
                 seed, amplitude, largeFlower, flowerCount, fieldSize);
@@ -126,5 +129,16 @@ namespace Flowers
             Create();
         }
 
+        public void RandomInfluenceChanged(float randomInfluence)
+        {
+            this.randomInfluence = randomInfluence;
+            Create();
+        }
+
+        public void bezierCurveAugmentChanged(float bezierCurveAugment)
+        {
+            this.bezierCurveAugment = bezierCurveAugment;
+            Create();
+        }
     }
 }

@@ -10,12 +10,15 @@ namespace Flowers
         [SerializeField]
         private GameObject prefabLine;
 
+        private Color32 stemColor = new Color32(17, 72, 12, 255);
+
         public GameObject CreateFlower(float amplitude,
             int seed,
             int resolution, 
             int lineCount,
             float innerRadius, float stemWobble,
-            Color color1, Color color2)
+            Color color1, Color color2,
+            float randomInfluence, float bezierCurveAugment)
         {
             Random.State oldState = Random.state;
             Random.InitState(seed);
@@ -31,17 +34,30 @@ namespace Flowers
             for (int i = 0; i < lineCount; i++)
             {
                 float angle = ((float)i / lineCount) * 360f * Mathf.Deg2Rad;
-                Vector3 outwardDirection = new Vector3(
-                    Mathf.Cos(angle), Mathf.Sin(angle));
+                /*Vector3 outwardDirection = new Vector3(
+                    Mathf.Cos(angle), Mathf.Sin(angle));*/
+
+                Vector3 randomVec = Random.onUnitSphere * randomInfluence;
+
+                Vector3 pos1 =
+                    innerRadius * Vector3.Normalize(new Vector3(
+                        Mathf.Cos(angle - halfAngle),
+                        Mathf.Sin(angle - halfAngle)));
+                
+                Vector3 pos2 =
+                    (amplitude * new Vector3(Mathf.Cos(angle - bezierCurveAugment), Mathf.Sin(angle - bezierCurveAugment))) + randomVec;
+
+                Vector3 pos3 =
+                    (amplitude * new Vector3(Mathf.Cos(angle + bezierCurveAugment), Mathf.Sin(angle + bezierCurveAugment))) + randomVec;
+                
+                Vector3 pos4 =
+                    innerRadius * Vector3.Normalize(new Vector3(
+                        Mathf.Cos(angle + halfAngle),
+                        Mathf.Sin(angle + halfAngle)));
 
                 Vector3[] controlPoints = new Vector3[4]
                 {
-                    innerRadius * Vector3.Normalize(new Vector3(
-                        Mathf.Cos(angle - halfAngle), Mathf.Sin(angle - halfAngle))),
-                    amplitude * outwardDirection,
-                    amplitude * outwardDirection,
-                    innerRadius * Vector3.Normalize(new Vector3(
-                        Mathf.Cos(angle + halfAngle), Mathf.Sin(angle + halfAngle)))
+                    pos1, pos2, pos3, pos4
                 };
                 curves[i] = new CubicBezierCurve(controlPoints);
 
@@ -110,8 +126,8 @@ namespace Flowers
             stemLine_lr.positionCount = stemPositions.Length;
             stemLine_lr.SetPositions(stemPositions);
 
-            stemLine_lr.startColor = color1;
-            stemLine_lr.endColor = color2;
+            stemLine_lr.startColor = stemColor;
+            stemLine_lr.endColor = stemColor;
 
             return stemLine;
         }

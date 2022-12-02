@@ -54,6 +54,16 @@ namespace Flowers
             flowerMain.FieldSizeChanged(fieldSize);
         }
 
+        public void RandomInfluenceChanged(float randomInfluence)
+        {
+            flowerMain.RandomInfluenceChanged(randomInfluence);
+        }
+
+        public void BezierCurveAugmentChanged(float bezierCurveAugment)
+        {
+            flowerMain.bezierCurveAugmentChanged(bezierCurveAugment);
+        }
+
         public void Color1Changed(float index)
         {
             flowerMain.Color1Changed(IndexToColor((int)index));
