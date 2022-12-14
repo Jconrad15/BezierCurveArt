@@ -9,11 +9,28 @@ public class BezierTerrainMain : MonoBehaviour
 
     private int seed = -1;
 
+    private GameObject createdTerrain;
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            bezierTerrainGen.Generate(seed, 10, 10, true);
+            TryCleanUp();
+
+            createdTerrain = bezierTerrainGen.Generate(
+                seed, 100, 100, true, false);
+
+            // Position terrain for camera
+            createdTerrain.transform.position = new Vector3(
+                -0.5f, -0.25f, -0.5f);
+        }
+    }
+
+    private void TryCleanUp()
+    {
+        if (createdTerrain != null)
+        {
+            Destroy(createdTerrain);
         }
     }
 }

@@ -7,13 +7,17 @@ public class BezierTerrainGen : MonoBehaviour
     private readonly float width = 1f;
     private readonly float length = 1f;
 
-    public void Generate(
+    public GameObject Generate(
         int seed,
         int xResolution, int zResolution,
+        bool createMesh = true,
         bool createSpheres = false)
     {
         Random.State oldState = Random.state;
         Random.InitState(seed);
+
+        // Create container gameobject
+        GameObject terrainGO = new GameObject("Terrain");
 
         // Determine all points
         Vector3[] points = new Vector3[xResolution * zResolution];
@@ -37,9 +41,9 @@ public class BezierTerrainGen : MonoBehaviour
                 new Vector3(
                     x / xResolution * width, 0, 0),
                 new Vector3(
-                    x / xResolution * width, Random.value, 0),
+                    x / xResolution * width, 1, 0),
                 new Vector3(
-                    x / xResolution * width, Random.value, length),
+                    x / xResolution * width, 1, length),
                 new Vector3(
                     x / xResolution * width, 0, length)
             };
@@ -54,9 +58,9 @@ public class BezierTerrainGen : MonoBehaviour
                 new Vector3(
                     0, 0, z / (float)zResolution * length),
                 new Vector3(
-                    0, Random.value, z / (float)zResolution * length),
+                    0, 1, z / (float)zResolution * length),
                 new Vector3(
-                    length, Random.value, z / (float)zResolution * length),
+                    length, 1, z / (float)zResolution * length),
                 new Vector3(
                     length, 0, z / (float)zResolution * length)
             };
@@ -82,20 +86,55 @@ public class BezierTerrainGen : MonoBehaviour
         }
 
         // Generate mesh
-        //Vector2[] newUV;
-        int[] triangles = new int[(xResolution + 1) * (zResolution + 1)];
-        for (int i = 0; i < triangles.Length / 6; i++)
+        if (createMesh)
         {
-            triangles[i * 6 + 0] = i * 2;
-            triangles[i * 6 + 1] = i * 2 + 1;
-            triangles[i * 6 + 2] = i * 2 + 2;
-
-            triangles[i * 6 + 3] = i * 2 + 2;
-            triangles[i * 6 + 4] = i * 2 + 1;
-            triangles[i * 6 + 5] = i * 2 + 3;
+            GameObject meshGO = CreateMesh(
+                xResolution, zResolution, points);
+            meshGO.transform.SetParent(terrainGO.transform);
         }
+
+        if (createSpheres)
+        {
+            GameObject sphereGOs = GenerateSpheres(points);
+            sphereGOs.transform.SetParent(terrainGO.transform);
+        }
+
+        Random.state = oldState;
+        return terrainGO;
+    }
+
+    private GameObject CreateMesh(
+        int xResolution, int zResolution, Vector3[] verticies)
+    {
+        //Vector2[] newUV;
+        int[] triangles = new int[
+            (xResolution - 1) * (zResolution - 1) * 6];
+
+        int tIndex = 0;
+        for (int z = 0; z < zResolution - 1; z++)
+        {
+            for (int x = 0; x < xResolution - 1; x++)
+            {
+                int i = (z * zResolution) + x;
+
+                if (tIndex >= triangles.Length)
+                {
+                    Debug.Log("Too long");
+                }
+
+                triangles[tIndex] = i;
+                triangles[tIndex + 1] = i + zResolution + 1;
+                triangles[tIndex + 2] = i + 1;
+                triangles[tIndex + 3] = i;
+                triangles[tIndex + 4] = i + zResolution;
+                triangles[tIndex + 5] = i + zResolution + 1;
+
+                tIndex += 6;
+            }
+        }
+
         Mesh mesh = new Mesh();
-        mesh.vertices = points;
+        mesh.vertices = verticies;
         //mesh.uv = newUV;
         mesh.triangles = triangles;
 
@@ -104,16 +143,10 @@ public class BezierTerrainGen : MonoBehaviour
         MeshFilter mf = meshGO.AddComponent<MeshFilter>();
         mf.mesh = mesh;
 
-
-        if (createSpheres)
-        {
-            GenerateSpheres(points);
-        }
-
-        Random.state = oldState;
+        return meshGO;
     }
 
-    private static void GenerateSpheres(Vector3[] points)
+    private GameObject GenerateSpheres(Vector3[] points)
     {
         GameObject sphereParent = new GameObject("Spheres");
         // Generate Gameobjects at points
@@ -124,7 +157,9 @@ public class BezierTerrainGen : MonoBehaviour
 
             sphere.transform.SetParent(sphereParent.transform);
             sphere.transform.position = points[i];
-            sphere.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f);
+            sphere.transform.localScale =
+                new Vector3(0.05f, 0.05f, 0.05f);
         }
+        return sphereParent;
     }
 }
