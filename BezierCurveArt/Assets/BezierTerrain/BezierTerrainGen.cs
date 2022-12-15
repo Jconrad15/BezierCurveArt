@@ -8,12 +8,15 @@ namespace Terrain
     {
         private readonly float width = 1f;
         private readonly float length = 1f;
+
+        private float randomDelta = 0.1f;
+
         [SerializeField]
         private Material terrainMaterial;
 
         public GameObject Generate(
             int seed,
-            int xResolution, int zResolution,
+            int xResolution, int zResolution, float randomInfluence,
             Vector3 xc1, Vector3 xc2, Vector3 xc3, Vector3 xc4,
             Vector3 zc1, Vector3 zc2, Vector3 zc3, Vector3 zc4,
             bool createMesh = true,
@@ -42,24 +45,28 @@ namespace Terrain
             CubicBezierCurve[] xCurves = new CubicBezierCurve[xResolution];
             for (int x = 0; x < xResolution; x++)
             {
-                float scaledX = x / xResolution * width;
+                float scaledX = x / (float)xResolution * width;
                 Vector3[] controlPoints = new Vector3[4]
                 {
                 new Vector3(
                     scaledX,
-                    xc1.x + (xc1.y * scaledX) + (xc1.z * scaledX * scaledX),
+                    xc1.x + (xc1.y * Mathf.Sin(scaledX * xc1.z)) +
+                    (randomInfluence * Random.Range(-randomDelta, randomDelta)),
                     0),
                 new Vector3(
                     scaledX,
-                    xc2.x + (xc2.y * scaledX) + (xc2.z * scaledX * scaledX),
+                    xc2.x + (xc2.y * Mathf.Sin(scaledX * xc2.z)) +
+                    (randomInfluence * Random.Range(-randomDelta, randomDelta)),
                     0),
                 new Vector3(
                     scaledX,
-                    xc3.x + (xc3.y * scaledX) + (xc3.z * scaledX * scaledX),
+                    xc3.x + (xc3.y * Mathf.Sin(scaledX * xc3.z)) +
+                    (randomInfluence * Random.Range(-randomDelta, randomDelta)),
                     length),
                 new Vector3(
                     scaledX,
-                    xc4.x +(xc4.y * scaledX) +(xc4.z * scaledX * scaledX),
+                    xc4.x + (xc4.y * Mathf.Sin(scaledX * xc4.z)) +
+                    (randomInfluence * Random.Range(-randomDelta, randomDelta)),
                     length)
                 };
 
@@ -68,24 +75,29 @@ namespace Terrain
             CubicBezierCurve[] zCurves = new CubicBezierCurve[zResolution];
             for (int z = 0; z < zResolution; z++)
             {
+                float scaledZ = z / (float)zResolution * length;
                 Vector3[] controlPoints = new Vector3[4]
                 {
                 new Vector3(
                     0,
-                    zc1.x + (zc1.y * z) + (zc1.z * z * z),
-                    z / (float)zResolution * length),
+                    zc1.x + (zc1.y * Mathf.Sin(scaledZ * zc1.z)) +
+                    (randomInfluence * Random.Range(-randomDelta, randomDelta)),
+                    scaledZ),
                 new Vector3(
                     0,
-                    zc2.x + (zc2.y * z) + (zc2.z * z * z),
-                    z / (float)zResolution * length),
+                    zc2.x + (zc2.y * Mathf.Sin(scaledZ * zc2.z)) +
+                    (randomInfluence * Random.Range(-randomDelta, randomDelta)),
+                    scaledZ),
                 new Vector3(
                     length,
-                    zc3.x + (zc3.y * z) + (zc3.z * z * z),
-                    z / (float)zResolution * length),
+                    zc3.x + (zc3.y * Mathf.Sin(scaledZ * zc3.z)) +
+                    (randomInfluence * Random.Range(-randomDelta, randomDelta)),
+                    scaledZ),
                 new Vector3(
                     length,
-                    zc4.x + (zc4.y * z) + (zc4.z * z * z),
-                    z / (float)zResolution * length)
+                    zc4.x + (zc4.y * Mathf.Sin(scaledZ * zc4.z)) +
+                    (randomInfluence * Random.Range(-randomDelta, randomDelta)),
+                    scaledZ)
                 };
 
                 zCurves[z] = new CubicBezierCurve(controlPoints);
