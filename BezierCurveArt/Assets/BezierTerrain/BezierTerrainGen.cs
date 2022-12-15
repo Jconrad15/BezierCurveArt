@@ -14,8 +14,8 @@ namespace Terrain
         public GameObject Generate(
             int seed,
             int xResolution, int zResolution,
-            float xc1, float xc2, float xc3, float xc4,
-            float yc1, float yc2, float yc3, float yc4,
+            Vector3 xc1, Vector3 xc2, Vector3 xc3, Vector3 xc4,
+            Vector3 zc1, Vector3 zc2, Vector3 zc3, Vector3 zc4,
             bool createMesh = true,
             bool createSpheres = false)
         {
@@ -42,16 +42,25 @@ namespace Terrain
             CubicBezierCurve[] xCurves = new CubicBezierCurve[xResolution];
             for (int x = 0; x < xResolution; x++)
             {
+                float scaledX = x / xResolution * width;
                 Vector3[] controlPoints = new Vector3[4]
                 {
                 new Vector3(
-                    x / xResolution * width, xc1, 0),
+                    scaledX,
+                    xc1.x + (xc1.y * scaledX) + (xc1.z * scaledX * scaledX),
+                    0),
                 new Vector3(
-                    x / xResolution * width, xc2, 0),
+                    scaledX,
+                    xc2.x + (xc2.y * scaledX) + (xc2.z * scaledX * scaledX),
+                    0),
                 new Vector3(
-                    x / xResolution * width, xc3, length),
+                    scaledX,
+                    xc3.x + (xc3.y * scaledX) + (xc3.z * scaledX * scaledX),
+                    length),
                 new Vector3(
-                    x / xResolution * width, xc4, length)
+                    scaledX,
+                    xc4.x +(xc4.y * scaledX) +(xc4.z * scaledX * scaledX),
+                    length)
                 };
 
                 xCurves[x] = new CubicBezierCurve(controlPoints);
@@ -62,13 +71,21 @@ namespace Terrain
                 Vector3[] controlPoints = new Vector3[4]
                 {
                 new Vector3(
-                    0, yc1, z / (float)zResolution * length),
+                    0,
+                    zc1.x + (zc1.y * z) + (zc1.z * z * z),
+                    z / (float)zResolution * length),
                 new Vector3(
-                    0, yc2, z / (float)zResolution * length),
+                    0,
+                    zc2.x + (zc2.y * z) + (zc2.z * z * z),
+                    z / (float)zResolution * length),
                 new Vector3(
-                    length, yc3, z / (float)zResolution * length),
+                    length,
+                    zc3.x + (zc3.y * z) + (zc3.z * z * z),
+                    z / (float)zResolution * length),
                 new Vector3(
-                    length, yc4, z / (float)zResolution * length)
+                    length,
+                    zc4.x + (zc4.y * z) + (zc4.z * z * z),
+                    z / (float)zResolution * length)
                 };
 
                 zCurves[z] = new CubicBezierCurve(controlPoints);
