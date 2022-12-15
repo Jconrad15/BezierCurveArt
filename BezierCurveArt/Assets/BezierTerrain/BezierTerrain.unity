@@ -153,6 +153,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bezierTerrainGen: {fileID: 1509643501}
+  xc1: 0
+  xc2: 0
+  xc3: 0
+  xc4: 0
 --- !u!4 &131954764
 Transform:
   m_ObjectHideFlags: 0
@@ -339,7 +343,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 878516179}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalPosition: {x: 0, y: 1, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -390,6 +394,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bf4d1ccf3c1ef541a05a4326c86ecbe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  radius: 2
 --- !u!1 &1509643500
 GameObject:
   m_ObjectHideFlags: 0
@@ -419,6 +424,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3ad31c67a3298c24eb3278aad793c379, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  terrainMaterial: {fileID: 2100000, guid: ccea9068c2b632d4991dd147c559c88f, type: 2}
 --- !u!4 &1509643502
 Transform:
   m_ObjectHideFlags: 0

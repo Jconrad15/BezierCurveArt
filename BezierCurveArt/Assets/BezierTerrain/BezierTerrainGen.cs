@@ -6,10 +6,14 @@ public class BezierTerrainGen : MonoBehaviour
 {
     private readonly float width = 1f;
     private readonly float length = 1f;
+    [SerializeField]
+    private Material terrainMaterial;
 
     public GameObject Generate(
         int seed,
         int xResolution, int zResolution,
+        float xc1, float xc2, float xc3, float xc4,
+        float yc1, float yc2, float yc3, float yc4,
         bool createMesh = true,
         bool createSpheres = false)
     {
@@ -39,13 +43,13 @@ public class BezierTerrainGen : MonoBehaviour
             Vector3[] controlPoints = new Vector3[4]
             {
                 new Vector3(
-                    x / xResolution * width, 0, 0),
+                    x / xResolution * width, xc1, 0),
                 new Vector3(
-                    x / xResolution * width, 1, 0),
+                    x / xResolution * width, xc2, 0),
                 new Vector3(
-                    x / xResolution * width, 1, length),
+                    x / xResolution * width, xc3, length),
                 new Vector3(
-                    x / xResolution * width, 0, length)
+                    x / xResolution * width, xc4, length)
             };
 
             xCurves[x] = new CubicBezierCurve(controlPoints);
@@ -56,13 +60,13 @@ public class BezierTerrainGen : MonoBehaviour
             Vector3[] controlPoints = new Vector3[4]
             {
                 new Vector3(
-                    0, 0, z / (float)zResolution * length),
+                    0, yc1, z / (float)zResolution * length),
                 new Vector3(
-                    0, 1, z / (float)zResolution * length),
+                    0, yc2, z / (float)zResolution * length),
                 new Vector3(
-                    length, 1, z / (float)zResolution * length),
+                    length, yc3, z / (float)zResolution * length),
                 new Vector3(
-                    length, 0, z / (float)zResolution * length)
+                    length, yc4, z / (float)zResolution * length)
             };
 
             zCurves[z] = new CubicBezierCurve(controlPoints);
@@ -108,8 +112,9 @@ public class BezierTerrainGen : MonoBehaviour
     {
         //Vector2[] newUV;
         int[] triangles = new int[
-            (xResolution - 1) * (zResolution - 1) * 6];
+            (xResolution - 1) * (zResolution - 1) * 6 * 2];
 
+        // Top side of triangles
         int tIndex = 0;
         for (int z = 0; z < zResolution - 1; z++)
         {
@@ -132,6 +137,28 @@ public class BezierTerrainGen : MonoBehaviour
                 tIndex += 6;
             }
         }
+        // Bottom side of triangles
+        for (int z = 0; z < zResolution - 1; z++)
+        {
+            for (int x = 0; x < xResolution - 1; x++)
+            {
+                int i = (z * zResolution) + x;
+
+                if (tIndex >= triangles.Length)
+                {
+                    Debug.Log("Too long");
+                }
+
+                triangles[tIndex] = i;
+                triangles[tIndex + 1] = i + 1;
+                triangles[tIndex + 2] = i + zResolution + 1;
+                triangles[tIndex + 3] = i;
+                triangles[tIndex + 4] = i + zResolution + 1;
+                triangles[tIndex + 5] = i + zResolution;
+
+                tIndex += 6;
+            }
+        }
 
         Mesh mesh = new Mesh();
         mesh.vertices = verticies;
@@ -142,6 +169,7 @@ public class BezierTerrainGen : MonoBehaviour
         MeshRenderer mr = meshGO.AddComponent<MeshRenderer>();
         MeshFilter mf = meshGO.AddComponent<MeshFilter>();
         mf.mesh = mesh;
+        mr.material = terrainMaterial;
 
         return meshGO;
     }

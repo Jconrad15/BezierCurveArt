@@ -7,6 +7,24 @@ public class BezierTerrainMain : MonoBehaviour
     [SerializeField]
     private BezierTerrainGen bezierTerrainGen;
 
+    [SerializeField]
+    private float xc1 = 0f;
+    [SerializeField]
+    private float xc2 = 0f;
+    [SerializeField]
+    private float xc3 = 0f;
+    [SerializeField]
+    private float xc4 = 0f;
+
+    [SerializeField]
+    private float yc1 = 0f;
+    [SerializeField]
+    private float yc2 = 0f;
+    [SerializeField]
+    private float yc3 = 0f;
+    [SerializeField]
+    private float yc4 = 0f;
+
     private int seed = -1;
 
     private GameObject createdTerrain;
@@ -18,11 +36,14 @@ public class BezierTerrainMain : MonoBehaviour
             TryCleanUp();
 
             createdTerrain = bezierTerrainGen.Generate(
-                seed, 100, 100, true, false);
+                seed, 100, 100,
+                xc1, xc2, xc3, xc4,
+                yc1, yc2, yc3, yc4,
+                true, false);
 
             // Position terrain for camera
             createdTerrain.transform.position = new Vector3(
-                -0.5f, -0.25f, -0.5f);
+                -0.5f, -0.5f, -0.5f);
         }
     }
 

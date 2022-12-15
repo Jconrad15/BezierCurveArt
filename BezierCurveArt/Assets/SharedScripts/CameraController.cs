@@ -5,6 +5,7 @@ public class CameraController : MonoBehaviour
     private readonly float rotateSpeed = 1.5f;
     private readonly float zoomSpeed = 80f;
 
+    [SerializeField]
     private float radius = 10;
     private float t = 90;
 
