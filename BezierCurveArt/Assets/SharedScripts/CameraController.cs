@@ -8,10 +8,12 @@ public class CameraController : MonoBehaviour
     [SerializeField]
     private float radius = 10;
     private float t = 90;
+    [SerializeField]
+    private float startRotation = 0f;
 
     void Start()
     {
-        Rotate(0);
+        Rotate(startRotation);
     }
 
     void Update()

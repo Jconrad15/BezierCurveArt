@@ -11,7 +11,10 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/BezierCurveWalk/BezierCurveWalk.unity
     guid: aa4b9528c20e9af4ab0b5fadc15965b8
-  - enabled: 1
+  - enabled: 0
     path: Assets/Flowers/FlowerScene.unity
     guid: 92fe83e5fefee1648b9da445240e0f3c
+  - enabled: 1
+    path: Assets/BezierTerrain/BezierTerrain.unity
+    guid: 4b3f502eb8f3c5049a2e782e5052b02c
   m_configObjects: {}
