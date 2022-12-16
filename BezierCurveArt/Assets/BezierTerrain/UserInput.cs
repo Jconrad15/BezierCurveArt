@@ -10,14 +10,14 @@ namespace Terrain
             terrainMain = FindObjectOfType<BezierTerrainMain>();
         }
 
-        public void SeedChanged(float seed)
-        {
-            terrainMain.SeedChanged((int)seed);
-        }
-
         public void RandomInfluenceChanged(float value)
         {
             terrainMain.RandomInfluenceChanged(value);
+        }
+
+        public void ScaleChanged(float value)
+        {
+            terrainMain.ScaleChanged(value);
         }
 
         // X Curves

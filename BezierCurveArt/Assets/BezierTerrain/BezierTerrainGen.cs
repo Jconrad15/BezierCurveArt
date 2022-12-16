@@ -9,22 +9,17 @@ namespace Terrain
         private readonly float width = 1f;
         private readonly float length = 1f;
 
-        private float randomDelta = 0.1f;
-
         [SerializeField]
         private Material terrainMaterial;
 
         public GameObject Generate(
-            int seed,
-            int xResolution, int zResolution, float randomInfluence,
+            int xResolution, int zResolution,
+            float randomInfluence, float scale,
             Vector3 xc1, Vector3 xc2, Vector3 xc3, Vector3 xc4,
             Vector3 zc1, Vector3 zc2, Vector3 zc3, Vector3 zc4,
             bool createMesh = true,
             bool createSpheres = false)
         {
-            Random.State oldState = Random.state;
-            Random.InitState(seed);
-
             // Create container gameobject
             GameObject terrainGO = new GameObject("Terrain");
 
@@ -50,23 +45,19 @@ namespace Terrain
                 {
                 new Vector3(
                     scaledX,
-                    xc1.x + (xc1.y * Mathf.Sin(scaledX * xc1.z)) +
-                    (randomInfluence * Random.Range(-randomDelta, randomDelta)),
+                    xc1.x + (xc1.y * Mathf.Sin(scaledX * xc1.z)),
                     0),
                 new Vector3(
                     scaledX,
-                    xc2.x + (xc2.y * Mathf.Sin(scaledX * xc2.z)) +
-                    (randomInfluence * Random.Range(-randomDelta, randomDelta)),
+                    xc2.x + (xc2.y * Mathf.Sin(scaledX * xc2.z)),
                     0),
                 new Vector3(
                     scaledX,
-                    xc3.x + (xc3.y * Mathf.Sin(scaledX * xc3.z)) +
-                    (randomInfluence * Random.Range(-randomDelta, randomDelta)),
+                    xc3.x + (xc3.y * Mathf.Sin(scaledX * xc3.z)),
                     length),
                 new Vector3(
                     scaledX,
-                    xc4.x + (xc4.y * Mathf.Sin(scaledX * xc4.z)) +
-                    (randomInfluence * Random.Range(-randomDelta, randomDelta)),
+                    xc4.x + (xc4.y * Mathf.Sin(scaledX * xc4.z)),
                     length)
                 };
 
@@ -80,23 +71,19 @@ namespace Terrain
                 {
                 new Vector3(
                     0,
-                    zc1.x + (zc1.y * Mathf.Sin(scaledZ * zc1.z)) +
-                    (randomInfluence * Random.Range(-randomDelta, randomDelta)),
+                    zc1.x + (zc1.y * Mathf.Sin(scaledZ * zc1.z)),
                     scaledZ),
                 new Vector3(
                     0,
-                    zc2.x + (zc2.y * Mathf.Sin(scaledZ * zc2.z)) +
-                    (randomInfluence * Random.Range(-randomDelta, randomDelta)),
+                    zc2.x + (zc2.y * Mathf.Sin(scaledZ * zc2.z)),
                     scaledZ),
                 new Vector3(
-                    length,
-                    zc3.x + (zc3.y * Mathf.Sin(scaledZ * zc3.z)) +
-                    (randomInfluence * Random.Range(-randomDelta, randomDelta)),
+                    width,
+                    zc3.x + (zc3.y * Mathf.Sin(scaledZ * zc3.z)),
                     scaledZ),
                 new Vector3(
-                    length,
-                    zc4.x + (zc4.y * Mathf.Sin(scaledZ * zc4.z)) +
-                    (randomInfluence * Random.Range(-randomDelta, randomDelta)),
+                    width,
+                    zc4.x + (zc4.y * Mathf.Sin(scaledZ * zc4.z)),
                     scaledZ)
                 };
 
@@ -116,7 +103,9 @@ namespace Terrain
                         x / (float)xResolution * width).y;
 
                     // Adjust height of the point
-                    points[i].y += (xCurveHeight + zCurveHeight) / 2f;
+                    points[i].y +=
+                        ((xCurveHeight + zCurveHeight) / 2f) +
+                        (randomInfluence * Perlin(x, z, scale));
                 }
             }
 
@@ -134,14 +123,20 @@ namespace Terrain
                 sphereGOs.transform.SetParent(terrainGO.transform);
             }
 
-            Random.state = oldState;
             return terrainGO;
         }
 
         private GameObject CreateMesh(
-            int xResolution, int zResolution, Vector3[] verticies)
+            int xResolution, int zResolution, Vector3[] points)
         {
-            //Vector2[] newUV;
+            // Assign the points to vertices twice. once for each side
+            Vector3[] vertices = new Vector3[points.Length * 2];
+            for (int i = 0; i < points.Length; i++)
+            {
+                vertices[i] = points[i];
+                vertices[i + points.Length] = points[i];
+            }
+
             int[] triangles = new int[
                 (xResolution - 1) * (zResolution - 1) * 6 * 2];
 
@@ -173,7 +168,7 @@ namespace Terrain
             {
                 for (int x = 0; x < xResolution - 1; x++)
                 {
-                    int i = (z * zResolution) + x;
+                    int i = (z * zResolution) + x + points.Length;
 
                     if (tIndex >= triangles.Length)
                     {
@@ -192,15 +187,18 @@ namespace Terrain
             }
 
             Mesh mesh = new Mesh();
-            mesh.vertices = verticies;
+            mesh.vertices = vertices;
             //mesh.uv = newUV;
             mesh.triangles = triangles;
+
+            mesh.RecalculateNormals();
 
             GameObject meshGO = new GameObject("Mesh");
             MeshRenderer mr = meshGO.AddComponent<MeshRenderer>();
             MeshFilter mf = meshGO.AddComponent<MeshFilter>();
             mf.mesh = mesh;
             mr.material = terrainMaterial;
+            mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
 
             return meshGO;
         }
@@ -220,6 +218,13 @@ namespace Terrain
                     new Vector3(0.05f, 0.05f, 0.05f);
             }
             return sphereParent;
+        }
+
+        private float Perlin(float x, float z, float scale)
+        {
+            float value = Mathf.PerlinNoise(x * scale, z * scale);
+            value = (value / 10f) - (1 / 10f / 2f);
+            return value;
         }
     }
 }

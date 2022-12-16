@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.Experimental.TerrainAPI.TerrainUtility;
 
 namespace Terrain
 {
@@ -23,9 +22,7 @@ namespace Terrain
         private int xResolution = 100;
         private int zResolution = 100;
         private float randomInfluence = 0f;
-
-        [SerializeField]
-        private int seed = -1;
+        private float scale = 0.1f;
 
         private GameObject createdTerrain;
 
@@ -47,14 +44,15 @@ namespace Terrain
             TryCleanUp();
 
             createdTerrain = bezierTerrainGen.Generate(
-                seed, xResolution, zResolution, randomInfluence,
+                xResolution, zResolution,
+                randomInfluence, scale,
                 xc1, xc2, xc3, xc4,
                 zc1, zc2, zc3, zc4,
                 true, false);
 
             // Position terrain for camera
             createdTerrain.transform.position = new Vector3(
-                -0.5f, -0.5f, -0.5f);
+                -0.5f, -0.25f, -0.5f);
         }
 
         private void TryCleanUp()
@@ -65,15 +63,15 @@ namespace Terrain
             }
         }
 
-        public void SeedChanged(int seed)
-        {
-            this.seed = seed;
-            GenerateTerrain();
-        }
-
         public void RandomInfluenceChanged(float randomInfluence)
         {
             this.randomInfluence = randomInfluence;
+            GenerateTerrain();
+        }
+
+        public void ScaleChanged(float scale)
+        {
+            this.scale = scale;
             GenerateTerrain();
         }
 
