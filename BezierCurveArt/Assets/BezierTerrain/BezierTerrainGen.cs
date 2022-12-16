@@ -45,19 +45,19 @@ namespace Terrain
                 {
                 new Vector3(
                     scaledX,
-                    xc1.x + (xc1.y * Mathf.Sin(scaledX * xc1.z)),
+                    xc1.x + (xc1.y * scaledX) + Mathf.Sin(scaledX * xc1.z),
                     0),
                 new Vector3(
                     scaledX,
-                    xc2.x + (xc2.y * Mathf.Sin(scaledX * xc2.z)),
+                    xc2.x + (xc2.y * scaledX) + Mathf.Sin(scaledX * xc2.z),
                     0),
                 new Vector3(
                     scaledX,
-                    xc3.x + (xc3.y * Mathf.Sin(scaledX * xc3.z)),
+                    xc3.x + (xc3.y * scaledX) + Mathf.Sin(scaledX * xc3.z),
                     length),
                 new Vector3(
                     scaledX,
-                    xc4.x + (xc4.y * Mathf.Sin(scaledX * xc4.z)),
+                    xc4.x + (xc4.y * scaledX) + Mathf.Sin(scaledX * xc4.z),
                     length)
                 };
 
@@ -71,19 +71,19 @@ namespace Terrain
                 {
                 new Vector3(
                     0,
-                    zc1.x + (zc1.y * Mathf.Sin(scaledZ * zc1.z)),
+                    zc1.x + (zc1.y * scaledZ) + Mathf.Sin(scaledZ * zc1.z),
                     scaledZ),
                 new Vector3(
                     0,
-                    zc2.x + (zc2.y * Mathf.Sin(scaledZ * zc2.z)),
+                    zc2.x + (zc2.y * scaledZ) + Mathf.Sin(scaledZ * zc2.z),
                     scaledZ),
                 new Vector3(
                     width,
-                    zc3.x + (zc3.y * Mathf.Sin(scaledZ * zc3.z)),
+                    zc3.x + (zc3.y * scaledZ) + Mathf.Sin(scaledZ * zc3.z),
                     scaledZ),
                 new Vector3(
                     width,
-                    zc4.x + (zc4.y * Mathf.Sin(scaledZ * zc4.z)),
+                    zc4.x + (zc4.y * scaledZ) + Mathf.Sin(scaledZ * zc4.z),
                     scaledZ)
                 };
 
